@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { LayoutDashboard, LogOut, Activity, Archive } from 'lucide-react';
+import { LayoutDashboard, LogOut, Activity, Archive, PenTool } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 
 export default function Sidebar({ user, onSignOut, isOpen, onClose }) {
@@ -34,6 +34,14 @@ export default function Sidebar({ user, onSignOut, isOpen, onClose }) {
           >
             <LayoutDashboard size={18} />
             Generate Dashboard
+          </NavLink>
+          <NavLink
+            to="/manual"
+            className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
+            onClick={onClose}
+          >
+            <PenTool size={18} />
+            Manual Entry
           </NavLink>
           <NavLink
             to="/history"

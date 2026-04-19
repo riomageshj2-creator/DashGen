@@ -10,11 +10,12 @@ import UploadPage from './pages/UploadPage';
 import DashboardPage from './pages/DashboardPage';
 import HistoryPage from './pages/HistoryPage';
 import SharedDashboardPage from './pages/SharedDashboardPage';
+import ManualEntryPage from './pages/ManualEntryPage';
 import './App.css';
 
 function AppContent() {
   const { user, loading: authLoading, signIn, signUp, signOut } = useAuth();
-  const { uploading, progress, error, parsedResult, uploadAndParse, loadFromHistory, saveDashboardToCloud, toggleDashboardPublic, deleteDashboard, reset } = useFileUpload();
+  const { uploading, progress, error, parsedResult, uploadAndParse, processManualData, loadFromHistory, saveDashboardToCloud, toggleDashboardPublic, deleteDashboard, reset } = useFileUpload();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleFileAccepted = useCallback(
@@ -43,6 +44,14 @@ function AppContent() {
   const handleBack = useCallback(() => {
     reset();
   }, [reset]);
+
+  const handleProcessManualData = useCallback((rows, fileName) => {
+    try {
+      processManualData(rows, fileName);
+    } catch (err) {
+      console.error('Manual processing error:', err);
+    }
+  }, [processManualData]);
 
   const isSharedRoute = location.pathname.startsWith('/shared/');
 
@@ -86,6 +95,13 @@ function AppContent() {
           <Routes>
             <Route path="/shared/:id" element={<SharedDashboardPage />} />
             <Route path="/history" element={<HistoryPage onSelectDashboard={handleLoadFromHistory} onDeleteDashboard={deleteDashboard} />} />
+            <Route path="/manual" element={
+              parsedResult ? (
+                 <Navigate to="/" replace />
+              ) : (
+                 <ManualEntryPage onProcessData={handleProcessManualData} />
+              )
+            } />
             <Route path="*" element={
               parsedResult ? (
                 <DashboardPage 

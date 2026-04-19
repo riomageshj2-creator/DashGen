@@ -89,6 +89,48 @@ export function useFileUpload() {
     }
   }, []);
 
+  const processManualData = useCallback((dataRows, customFileName = 'Manual_Data') => {
+    setUploading(true);
+    setError(null);
+    setParsedResult(null);
+
+    try {
+      setProgress('Processing data...');
+      const columns = Object.keys(dataRows[0] || {});
+      
+      setProgress('Detecting columns...');
+      const columnTypes = detectColumnTypes(dataRows, columns);
+      const primaryColumns = findPrimaryColumns(columnTypes);
+
+      setProgress('Computing analytics...');
+      const summary = generateParsedSummary(dataRows, columns, columnTypes, primaryColumns);
+
+      const result = {
+        data: dataRows,
+        columns,
+        columnTypes,
+        primaryColumns,
+        summary,
+        fileName: customFileName,
+        fileSize: 0,
+        fileId: null,
+        rowCount: dataRows.length,
+        sheetCount: 1,
+      };
+
+      setParsedResult(result);
+      saveToSession(result);
+      setProgress('Done!');
+      return result;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setUploading(false);
+      setProgress('');
+    }
+  }, []);
+
   const loadFromHistory = useCallback(async (fileRecord) => {
     setUploading(true);
     setError(null);
@@ -233,6 +275,7 @@ export function useFileUpload() {
     error,
     parsedResult,
     uploadAndParse,
+    processManualData,
     loadFromHistory,
     saveDashboardToCloud,
     toggleDashboardPublic,
