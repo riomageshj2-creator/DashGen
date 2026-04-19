@@ -97,6 +97,12 @@ function computePlanStats(data, planColumns) {
       .sort((a, b) => a.value - b.value)
       .slice(0, 4);
 
+    // Get 4 biggest wins (most positive values)
+    const bigWins = allValues
+      .filter(({ value }) => value > 0)
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 4);
+
     const winPct = count > 0 ? ((positiveCount / count) * 100) : 0;
     const lossPct = count > 0 ? ((negativeCount / count) * 100) : 0;
 
@@ -113,6 +119,7 @@ function computePlanStats(data, planColumns) {
       winPct: Math.round(winPct * 100) / 100,
       lossPct: Math.round(lossPct * 100) / 100,
       bigLosses,
+      bigWins,
     };
   });
 }
@@ -499,6 +506,88 @@ export default function FourPlanChart({ data, columns }) {
                         color: COLORS.loss,
                       }}>
                         {loss.value.toLocaleString()}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ============ SECTION 5: Four Big Positive [Big Win] ============ */}
+      <div className="chart-card" style={{ gridColumn: '1 / -1' }}>
+        <div className="chart-card-header">
+          <h3>Big Win Comparison</h3>
+          <span>Top 4 biggest wins per plan</span>
+        </div>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: `repeat(${Math.min(planStats.length, 4)}, 1fr)`,
+          gap: '16px',
+        }}>
+          {planStats.map((plan, i) => (
+            <div key={plan.key} style={{
+              background: 'var(--bg-tertiary)',
+              borderRadius: 'var(--radius-md)',
+              overflow: 'hidden',
+            }}>
+              {/* Plan header */}
+              <div style={{
+                padding: '12px 16px',
+                background: `linear-gradient(135deg, ${PLAN_COLORS[i]}22, ${PLAN_COLORS[i]}08)`,
+                borderBottom: `2px solid ${PLAN_COLORS[i]}33`,
+              }}>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  {plan.name}
+                </div>
+                <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: 2 }}>
+                  {plan.bigWins.length} big wins
+                </div>
+              </div>
+
+              {/* Win rows */}
+              <div style={{ padding: '4px 0' }}>
+                {plan.bigWins.length === 0 ? (
+                  <div style={{ padding: '16px', textAlign: 'center', color: 'var(--text-tertiary)', fontSize: '12px' }}>
+                    No wins recorded
+                  </div>
+                ) : (
+                  plan.bigWins.map((win, idx) => (
+                    <div key={idx} style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '10px 16px',
+                      borderBottom: idx < plan.bigWins.length - 1 ? '1px solid var(--border-color)' : 'none',
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div style={{
+                          width: '24px',
+                          height: '24px',
+                          borderRadius: 'var(--radius-full)',
+                          background: 'rgba(16, 185, 129, 0.15)',
+                          color: COLORS.win,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '11px',
+                          fontWeight: 700,
+                        }}>
+                          #{idx + 1}
+                        </div>
+                        <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                          Trade
+                        </span>
+                      </div>
+                      <div style={{
+                        fontSize: '15px',
+                        fontWeight: 800,
+                        color: COLORS.win,
+                      }}>
+                        +{win.value.toLocaleString()}
                       </div>
                     </div>
                   ))
