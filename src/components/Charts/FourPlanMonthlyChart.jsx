@@ -232,7 +232,7 @@ export default function FourPlanMonthlyChart({ data, columns }) {
                   <span style={{ color: 'var(--text-secondary)' }}>{line.key}:</span>
                 </span>
                 <span style={{ color: val >= 0 ? '#10b981' : '#ef4444', fontWeight: 600 }}>
-                  {val?.toLocaleString() ?? 0}
+                  {val >= 0 ? '₹' : '-₹'}{Math.abs(val || 0).toLocaleString('en-IN')}
                   <span style={{ color: 'var(--text-tertiary)', fontWeight: 400, fontSize: '11px', marginLeft: 4 }}>
                     ({count})
                   </span>
@@ -463,7 +463,7 @@ export default function FourPlanMonthlyChart({ data, columns }) {
                   color: stats.total >= 0 ? '#10b981' : '#ef4444',
                   marginBottom: 8,
                 }}>
-                  {stats.total >= 0 ? '+' : ''}{stats.total.toLocaleString()}
+                  {stats.total >= 0 ? '+₹' : '-₹'}{Math.abs(stats.total).toLocaleString('en-IN')}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '11px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
