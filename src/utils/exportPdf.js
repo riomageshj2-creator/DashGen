@@ -1,6 +1,16 @@
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
+function getRGBColor(element) {
+  const el = element || document.body;
+  const bgColor = window.getComputedStyle(el).backgroundColor;
+  const match = bgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+  if (match) {
+    return [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])];
+  }
+  return [245, 246, 250]; // fallback light bg
+}
+
 /**
  * Export a DOM element as a PDF.
  */
@@ -10,42 +20,42 @@ export async function exportDashboardPdf(elementRef, fileName = 'dashboard-repor
   }
 
   const element = elementRef.current;
+  const rgbBg = getRGBColor(document.body);
+  const hexBg = `#${rgbBg.map(x => x.toString(16).padStart(2, '0')).join('')}`;
 
   // Capture the element as a canvas
   const canvas = await html2canvas(element, {
     scale: 2,
     useCORS: true,
     allowTaint: true,
-    backgroundColor: null,
+    backgroundColor: hexBg,
     logging: false,
   });
 
   const imgData = canvas.toDataURL('image/png');
 
-  // Create PDF
-  const pdf = new jsPDF('l', 'mm', 'a4'); // landscape for dashboards
-  const pdfWidth = pdf.internal.pageSize.getWidth();
-  const pdfHeight = pdf.internal.pageSize.getHeight();
-  const imgWidth = canvas.width;
-  const imgHeight = canvas.height;
+  // Convert to original CSS dimensions (since scale: 2 was used)
+  const cssWidth = canvas.width / 2;
+  const cssHeight = canvas.height / 2;
 
-  // Scale image to fit page width
-  const ratio = pdfWidth / imgWidth;
-  const scaledHeight = imgHeight * ratio;
+  // Add comfortable padding around the dashboard
+  const padding = 40; // 40px
+  const pdfWidth = cssWidth + (padding * 2);
+  const pdfHeight = cssHeight + (padding * 2);
 
-  // Handle multi-page if dashboard is very tall
-  let yPosition = 0;
-  let remainingHeight = scaledHeight;
+  // Create a single-page PDF that fits everything seamlessly without cutting
+  const pdf = new jsPDF({
+    orientation: pdfWidth > pdfHeight ? 'l' : 'p',
+    unit: 'px',
+    format: [pdfWidth, pdfHeight]
+  });
 
-  while (remainingHeight > 0) {
-    if (yPosition > 0) {
-      pdf.addPage();
-    }
+  // Fill the entire PDF with the matching background color
+  pdf.setFillColor(rgbBg[0], rgbBg[1], rgbBg[2]);
+  pdf.rect(0, 0, pdfWidth, pdfHeight, 'F');
 
-    pdf.addImage(imgData, 'PNG', 0, -yPosition, pdfWidth, scaledHeight);
-    yPosition += pdfHeight;
-    remainingHeight -= pdfHeight;
-  }
+  // Add the captured image inside the padded area
+  pdf.addImage(imgData, 'PNG', padding, padding, cssWidth, cssHeight);
 
   pdf.save(fileName);
 }
