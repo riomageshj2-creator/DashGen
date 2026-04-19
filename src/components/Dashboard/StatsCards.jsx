@@ -76,12 +76,12 @@ export default function StatsCards({ summary, primaryColumns }) {
 }
 
 function formatCurrency(value) {
-  if (value === undefined || value === null) return '₹0';
-  const formatted = Math.abs(value).toLocaleString('en-US', {
+  if (value === undefined || value === null) return '0 Pts';
+  const formatted = Math.abs(value).toLocaleString('en-IN', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
-  return value < 0 ? `-₹${formatted}` : `₹${formatted}`;
+  return value < 0 ? `-${formatted} Pts` : `${formatted} Pts`;
 }
 
 function formatNumber(value) {

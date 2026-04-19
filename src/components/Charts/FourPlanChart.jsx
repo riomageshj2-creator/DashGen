@@ -165,11 +165,11 @@ const CountTooltip = ({ active, payload }) => {
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
             <span style={{ color: 'var(--text-secondary)' }}>Win Value:</span>
-            <span style={{ color: COLORS.win, fontWeight: 600 }}>{d.win.toLocaleString()}</span>
+            <span style={{ color: COLORS.win, fontWeight: 600 }}>₹{Math.abs(d.win).toLocaleString('en-IN')}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span style={{ color: 'var(--text-secondary)' }}>Loss Value:</span>
-            <span style={{ color: COLORS.loss, fontWeight: 600 }}>-{d.loss.toLocaleString()}</span>
+            <span style={{ color: COLORS.loss, fontWeight: 600 }}>-₹{Math.abs(d.loss).toLocaleString('en-IN')}</span>
           </div>
         </div>
       </div>
@@ -301,7 +301,7 @@ export default function FourPlanChart({ data, columns }) {
             fontWeight: 800,
             color: grandTotal >= 0 ? COLORS.win : COLORS.loss,
           }}>
-            Net: {grandTotal >= 0 ? '+' : ''}{Math.round(grandTotal).toLocaleString()}
+            Net: {grandTotal >= 0 ? '+' : '-'}{Math.abs(Math.round(grandTotal)).toLocaleString('en-IN')} Pts
           </span>
         </div>
 
@@ -324,11 +324,11 @@ export default function FourPlanChart({ data, columns }) {
                 {plan.name}
               </div>
               <div style={{ fontSize: '26px', fontWeight: 800, color: plan.total >= 0 ? COLORS.win : COLORS.loss }}>
-                {plan.total >= 0 ? '+' : ''}{plan.total.toLocaleString()}
+                {plan.total >= 0 ? '+₹' : '-₹'}{Math.abs(plan.total).toLocaleString('en-IN')}
               </div>
               <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginTop: 8, fontSize: '11px' }}>
-                <span style={{ color: COLORS.win }}>▲ {plan.win.toLocaleString()}</span>
-                <span style={{ color: COLORS.loss }}>▼ -{plan.loss.toLocaleString()}</span>
+                <span style={{ color: COLORS.win }}>▲ ₹{Math.abs(plan.win).toLocaleString('en-IN')}</span>
+                <span style={{ color: COLORS.loss }}>▼ -₹{Math.abs(plan.loss).toLocaleString('en-IN')}</span>
               </div>
             </div>
           ))}
@@ -358,7 +358,7 @@ export default function FourPlanChart({ data, columns }) {
                 boxShadow: 'var(--shadow-lg)',
                 fontSize: '13px',
               }}
-              formatter={(value) => [value.toLocaleString(), 'Net Total']}
+              formatter={(value) => [`${value >= 0 ? '₹' : '-₹'}${Math.abs(value).toLocaleString('en-IN')}`, 'Net Total']}
             />
             <Bar dataKey="total" name="Net Total" radius={[6, 6, 0, 0]} maxBarSize={60}>
               {totalsData.map((entry, index) => (
@@ -505,7 +505,7 @@ export default function FourPlanChart({ data, columns }) {
                         fontWeight: 800,
                         color: COLORS.loss,
                       }}>
-                        {loss.value.toLocaleString()}
+                        -₹{Math.abs(loss.value).toLocaleString('en-IN')}
                       </div>
                     </div>
                   ))
@@ -587,7 +587,7 @@ export default function FourPlanChart({ data, columns }) {
                         fontWeight: 800,
                         color: COLORS.win,
                       }}>
-                        +{win.value.toLocaleString()}
+                        +₹{Math.abs(win.value).toLocaleString('en-IN')}
                       </div>
                     </div>
                   ))
