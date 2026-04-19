@@ -23,6 +23,9 @@ export async function exportDashboardPdf(elementRef, fileName = 'dashboard-repor
   const rgbBg = getRGBColor(document.body);
   const hexBg = `#${rgbBg.map(x => x.toString(16).padStart(2, '0')).join('')}`;
 
+  // Temporarily disable backdrop filters which wash out html2canvas
+  document.body.classList.add('pdf-exporting');
+
   // Capture the element as a canvas
   const canvas = await html2canvas(element, {
     scale: 2,
@@ -31,6 +34,8 @@ export async function exportDashboardPdf(elementRef, fileName = 'dashboard-repor
     backgroundColor: hexBg,
     logging: false,
   });
+
+  document.body.classList.remove('pdf-exporting');
 
   const imgData = canvas.toDataURL('image/png');
 

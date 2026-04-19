@@ -1346,3 +1346,15 @@
   color: var(--bg-card) !important;
   stroke: var(--border-color) !important;
 }
+
+ / *   D i s a b l e   b a c k d r o p   b l u r   d u r i n g   P D F   e x p o r t   t o   p r e v e n t   w a s h e d   o u t   t e x t   * / 
+ . p d f - e x p o r t i n g   . s t a t - c a r d , 
+ . p d f - e x p o r t i n g   . c h a r t - c a r d , 
+ . p d f - e x p o r t i n g   . d a t a - t a b l e - w r a p p e r , 
+ . p d f - e x p o r t i n g   . u p l o a d - z o n e , 
+ . p d f - e x p o r t i n g   . a u t h - c a r d   { 
+     b a c k d r o p - f i l t e r :   n o n e   ! i m p o r t a n t ; 
+     b a c k g r o u n d - c o l o r :   v a r ( - - b g - c a r d )   ! i m p o r t a n t ; 
+ } 
+  
+ 
